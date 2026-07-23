@@ -18,6 +18,7 @@ TEST(PPHPSingleInsertTest, NoField) {
     char value[] = "cokolwiek";
     int status = PPHP_first_field_insert(buffer, buffer_size,unprocessed, value);
     EXPECT_EQ(status, -1);
+    EXPECT_STREQ(buffer, "Jest to jakis teks bez fielda");
     free(buffer);
 }
 
@@ -90,6 +91,7 @@ TEST(PPHPVarFieldInsertTest, NoField) {
     char value[] = "chyba";
     int status = PPHP_var_field_insert(buffer, buffer_size, unprocessed, variable, value);
     EXPECT_EQ(status, -1);
+    EXPECT_STREQ(buffer, "Jest to test bez fielda");
     free(buffer);
 }
 
@@ -149,6 +151,7 @@ TEST(PPHPVarFieldInsertTest, NoMatchVar) {
     char value[] = "na koncu";
     int status = PPHP_var_field_insert(buffer, buffer_size, unprocessed, variable, value);
     EXPECT_EQ(status, -1);
+    EXPECT_STREQ(buffer, "Jest to test z fieldem <<y>>");
     free(buffer);
 }
 

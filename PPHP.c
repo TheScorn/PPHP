@@ -32,6 +32,7 @@ int PPHP_first_field_insert(char* buffer, size_t buffer_size, char* unprocessed,
 
     if(regexec(&regex, unprocessed, 2, matches, 0) != 0) {
         regfree(&regex);
+        snprintf(buffer, buffer_size, "%s", unprocessed);
         return -1;
     } 
 
@@ -77,6 +78,7 @@ int PPHP_var_field_insert(char* buffer, size_t buffer_size, char* unprocessed, c
 
     if(regexec(&regex, unprocessed, 2, matches, 0) != 0) {
         regfree(&regex);
+        snprintf(buffer, buffer_size, "%s", unprocessed);
         return -1;
     }
 
@@ -88,3 +90,4 @@ int PPHP_var_field_insert(char* buffer, size_t buffer_size, char* unprocessed, c
     snprintf(buffer, buffer_size, "%s%s%s", befeore_field, value, after_field);
     return 0;
 }
+
