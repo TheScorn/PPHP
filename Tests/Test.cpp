@@ -11,6 +11,10 @@ class PPHPVarFieldInsertTest : public testing::Test {
     protected:
 };
 
+class PPHPKeyValInsertTest : public testing::Test {
+    protected:
+};
+
 TEST(PPHPSingleInsertTest, NoField) {
     char unprocessed[] = "Jest to jakis teks bez fielda";
     size_t buffer_size = 200 * sizeof(char);
@@ -154,4 +158,66 @@ TEST(PPHPVarFieldInsertTest, NoMatchVar) {
     EXPECT_STREQ(buffer, "Jest to test z fieldem <<y>>");
     free(buffer);
 }
+
+TEST(PPHPKeyValInsertTest, NoField) {
+    char unprocessed[] = "Nie ma fielda w tym teście";
+    size_t buffer_size = 200 * sizeof(char);
+    char* buffer = (char*)malloc(buffer_size);
+    char keys[2][20] = {"name", "password"};
+    char vals[2][30] = {"admin", "idk"};
+    int status = PPHP_key_val_insert(buffer, buffer_size, unprocessed, keys, vals, 2);
+    EXPECT_EQ(status, 0);
+    EXPECT_STREQ(buffer, "Nie ma fielda w tym teście");
+    free(buffer);
+}
+
+TEST(PPHPKeyValInsertTest, OneField) {
+    char unprocessed[] = "Test z <<word>> fieldem";
+    size_t buffer_size = 200 * sizeof(char);
+    char* buffer = (char*)malloc(buffer_size);
+    char keys[2][20] = {"word", "password"};
+    char vals[2][30] = {"jednym", "idk"};
+    int status = PPHP_key_val_insert(buffer, buffer_size, unprocessed, keys, vals, 2);
+    EXPECT_EQ(status, 0);
+    EXPECT_STREQ(buffer, "Test z jednym fieldem");
+    free(buffer);
+}
+
+TEST(PPHPKeyValInsertTest, OneFieldSecondKey) {
+    char unprocessed[] = "Test z <<word>> fieldem";
+    size_t buffer_size = 200 * sizeof(char);
+    char* buffer = (char*)malloc(buffer_size);
+    char keys[2][20] = {"password", "word"};
+    char vals[2][30] = {"jednym", "jednym"};
+    int status = PPHP_key_val_insert(buffer, buffer_size, unprocessed, keys, vals, 2);
+    EXPECT_EQ(status, 0);
+    EXPECT_STREQ(buffer, "Test z jednym fieldem");
+    free(buffer);
+}
+
+TEST(PPHPKeyValInsertTest, TwoFields) {
+    char unprocessed[] = "Username: <<name>>, password: <<password>>";
+    size_t buffer_size = 200 * sizeof(char);
+    char* buffer = (char*)malloc(buffer_size);
+    char keys[2][20] = {"name", "password"};
+    char vals[2][30] = {"admin", "passwd"};
+    int status = PPHP_key_val_insert(buffer, buffer_size, unprocessed, keys, vals, 2);
+    EXPECT_EQ(status, 0);
+    EXPECT_STREQ(buffer, "Username: admin, password: passwd");
+    free(buffer);
+}
+
+TEST(PPHPKeyValInsertTest, UnknownField) {
+    char unprocessed[] = "Username: <<smthng>> ss";
+    size_t buffer_size = 200 * sizeof(char);
+    char* buffer = (char*)malloc(buffer_size);
+    char keys[2][20] = {"name", "password"};
+    char vals[2][30] = {"admin", "passwd"};
+    int status = PPHP_key_val_insert(buffer, buffer_size, unprocessed, keys, vals, 2);
+    EXPECT_EQ(status, -1);
+    EXPECT_STREQ(buffer, "Username: <<smthng>> ss");
+    free(buffer);
+}
+
+
 
